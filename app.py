@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    ingredients = Ingredient.find()
     return render_template('index.html', ingredients=Ingredient.find())
 
 @app.before_first_request

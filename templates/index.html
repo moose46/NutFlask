@@ -6,8 +6,16 @@
 </head>
 <body>
 Hello World<br>
-{% for a_file in ingredients %}
-      {{ a_file.name }}
-  {% endfor %}
+{% block content %}
+<select name="option" width="300px">
+    {% for i in ingredients %}
+        <option name="{{ i.name }}">{{ i.name }}</option>
+    {% endfor %}
+</select>
+<br>
+{% for ingredient in ingredients %}
+    {{ ingredient.name }}
+{% endfor %}
+{% endblock content %}
 </body>
 </html>
