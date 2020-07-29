@@ -26,6 +26,12 @@ class Ingredient(object):
         Database.insert("Ingredient", self.json())
 
     @classmethod
+    def find(cls):
+        '''use class method to return the object'''
+        ingredient_list = Database.find("Ingredient",None)
+        return ingredient_list
+
+    @classmethod
     def get_by_id(cls, id):
         return cls(**Database.find_one("Ingredient", {'_id': id}))
 
@@ -43,3 +49,4 @@ class Ingredient(object):
         'name': self.name,
         'usage': self.usage
         }
+

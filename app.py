@@ -1,11 +1,19 @@
-from flask import Flask
+from flask import Flask, render_template
+
+from common.database import Database
+from models.ingredient import Ingredient
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():
-    return 'Hello World!'
+def index():
+    return render_template('index.html', ingredients=Ingredient.find())
+
+@app.before_first_request
+def int_db():
+    Database.initialize()
+
 
 
 if __name__ == '__main__':

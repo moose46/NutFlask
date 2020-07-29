@@ -43,3 +43,7 @@ class Database (object):
     @staticmethod
     def delete_one(collection, query):
         return Database.DATABASE[collection].delete_one(query)
+
+    @staticmethod
+    def get_list(collection):
+        return Database.DATABASE[collection].find()
