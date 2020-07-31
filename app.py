@@ -1,10 +1,8 @@
-from flask import Flask, render_template
-from flask_restful import Resource, Api
+from flask import Flask
+from flask_restful import Api
 
 from common.database import Database
-from ingredient_rest import Ingredient_rest
-from flask.views import MethodView
-from models.ingredient import Ingredient
+from models.ingredient_rest import Ingredient_rest
 
 app = Flask(__name__)
 api = Api(app)
