@@ -23,7 +23,9 @@ class DatabaseTest(TestCase):
     def test010_connection(self):
         db = Database
         db.initialize(False)
-
+    def test015_get_salt(self):
+        x = Ingredient.get_by_name('salt_test')
+        print(x)
     # add salt to the database
     def test020_get_all(self):
         for x in Ingredient.find():

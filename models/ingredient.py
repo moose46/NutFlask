@@ -2,6 +2,7 @@ __author__ = 'Robert W. Curtiss'
 __project__ = 'Breathing Air Solutions'
 
 import uuid
+from importlib.resources import Resource
 
 from common.database import Database
 
@@ -16,7 +17,7 @@ Author: Robert W. Curtiss
     
 ===================================================
 """
-class Ingredient(object):
+class Ingredient():
     def __init__(self, name, usage = 'N/A', _id=None):
         self.name = name
         self.usage = usage
@@ -37,7 +38,7 @@ class Ingredient(object):
 
     @classmethod
     def get_by_name(cls, ingredient_name):
-        return cls(**Database.find_one("Ingredient", {'name': ingredient_name}))
+        return Database.find_one("Ingredient", {'name': ingredient_name})
 
     @classmethod
     def delete_by_name(cls, ingredient_name):
@@ -49,4 +50,12 @@ class Ingredient(object):
         'name': self.name,
         'usage': self.usage
         }
+    # def post(self, name, usage):
+    #     self.name = name
+    #     self.usage = usage
+    #     return self
+    # def get(self):
+    #     return self.find()
+    # def get(self, name):
+    #     return self.delete_by_name(name)
 
