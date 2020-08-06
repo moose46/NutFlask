@@ -36,13 +36,15 @@ Author: Robert W. Curtiss
 
 #https://www.udemy.com/course/rest-api-flask-and-python/learn/lecture/5960152#overview
 class Ingredient_rest(MethodView):
-    # def __init__(self, name, usage='N/A', _id=None):
-    #     self.name = name
-    #     self.usage = usage
-    #     self._id = uuid.uuid4().hex if _id is None else _id
+    def __init__(self, name='n/a', usage='N/A', _id=None):
+
+         self.name = name
+         self.usage = usage
+         self._id = uuid.uuid4().hex if _id is None else _id
 
     def save_to_mongo(self):
         Database.insert("Ingredient", self.json())
+
     # @classmethod
     # def find(self):
     #     '''use class method to return the object'''
@@ -70,8 +72,21 @@ class Ingredient_rest(MethodView):
     #     return self
     # def get(self):
     #     return self.Database.find("Ingredient", None)
+    """
+    https://www.udemy.com/course/rest-api-flask-and-python/learn/lecture/5960156#overview
+    """
     @classmethod
     def get(cls, name):
-        x = Ingredient_rest.get_by_name(name)
-        return x
+        try:
+            x = Ingredient_rest.get_by_name(name)
+            if x is not None:
+                return x
 
+            return{"ingredient" : None}, 404
+        except Exception as e:
+            return {"error" : e}
+    def post(self, name):
+        print(name)
+        self.name = name
+        self.save_to_mongo()
+        return self.json()
