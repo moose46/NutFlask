@@ -1,7 +1,10 @@
 __author__ = 'Robert W. Curtiss'
 __project__ = 'Breathing Air Solutions'
 
-from flask.views import MethodView
+from flask import Flask, request, make_response,jsonify,redirect,url_for
+from flask.views  import MethodView
+
+
 
 """
 ====================================================
@@ -15,10 +18,9 @@ Author: Robert W. Curtiss
 ===================================================
 """
 __author__ = 'Robert W. Curtiss'
-__project__ = 'Breathing Air Solutions'
+
 
 import uuid
-from importlib.resources import Resource
 
 from common.database import Database
 
@@ -41,6 +43,7 @@ class Ingredient_rest(MethodView):
          self.name = name
          self.usage = usage
          self._id = uuid.uuid4().hex if _id is None else _id
+
 
     def save_to_mongo(self):
         Database.insert("Ingredient", self.json())
@@ -75,18 +78,33 @@ class Ingredient_rest(MethodView):
     """
     https://www.udemy.com/course/rest-api-flask-and-python/learn/lecture/5960156#overview
     """
-    @classmethod
-    def get(cls, name):
+    error = {
+        "itemNotFound": {
+            "errorCode": "itemNotFound",
+            "errorMessage": "Item not found"
+        },
+        "itemAlreadyExists": {
+            "errorCode": "itemAlreadyExists",
+            "errorMessage": "Could not create item. Item already exists"
+        }
+    }
+
+    def get(self, name):
+
         try:
             x = Ingredient_rest.get_by_name(name)
             if x is not None:
-                return x
+                return make_response(jsonify(x), 200)
 
-            return{"ingredient" : None}, 404
+            return make_response(jsonify(self.error["itemNotFound"]), 400)
+
         except Exception as e:
             return {"error" : e}
-    def post(self, name):
-        print(name)
+    def post(self,name):
+        body = request.get_json()
+        x = Ingredient_rest.get_by_name(name)
+        if x is not None:
+            return make_response(jsonify(self.error["itemAlreadyExists"]), 400)
         self.name = name
         self.save_to_mongo()
         return self.json()
