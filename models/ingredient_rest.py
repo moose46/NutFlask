@@ -95,12 +95,19 @@ class Ingredient_rest(MethodView):
             x = Ingredient_rest.get_by_name(name)
             if x is not None:
                 return make_response(jsonify(x), 200)
-
-            return make_response(jsonify(self.error["itemNotFound"]), 400)
+            l1 = Database.get_list('Ingredient')
+            l3 = []
+            for l2 in l1:
+                l3.append(
+                    l2
+                )
+            return make_response(jsonify(l3, 200))
+            #return make_response(jsonify(self.error["itemNotFound"]), 400)
 
         except Exception as e:
             return {"error" : e}
     def post(self,name):
+        print('POST')
         body = request.get_json()
         x = Ingredient_rest.get_by_name(name)
         if x is not None:
@@ -108,3 +115,16 @@ class Ingredient_rest(MethodView):
         self.name = name
         self.save_to_mongo()
         return self.json()
+
+    def delete(self, name):
+        """ Delete an item """
+        x = Ingredient_rest.get_by_name(name)
+        if x is None:
+            return make_response(jsonify(self.error["itemNotFound"]), 400)
+        self.delete_by_name(name)
+        return make_response(jsonify({}), 200)
+
+# class IngredientApi(MethodView):
+#
+#     def get(self):
+#         return make_response(jsonify(Database.get_list("Ingredient",{}), 200))
