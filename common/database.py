@@ -30,7 +30,10 @@ class Database (object):
 
     @staticmethod
     def insert(collection, data):
-        Database.DATABASE[collection].insert_one(data)
+        try:
+            return Database.DATABASE[collection].insert_one(data)
+        except Exception as e:
+            return e
 
     @staticmethod
     def find(collection, query):
@@ -38,8 +41,10 @@ class Database (object):
 
     @staticmethod
     def find_one(collection, query):
-        return Database.DATABASE[collection].find_one(query)
-
+        try:
+            return Database.DATABASE[collection].find_one(query)
+        except Exception as e:
+            return e
     @staticmethod
     def delete_one(collection, query):
         return Database.DATABASE[collection].delete_one(query)
@@ -47,3 +52,11 @@ class Database (object):
     @staticmethod
     def get_list(collection):
         return Database.DATABASE[collection].find()
+
+    @staticmethod
+    def update(collection,mongo_id, new_values):
+        new_value = {"$set" : new_values}
+        try:
+            return True,Database.DATABASE[collection].update_one({'_id' : mongo_id}, new_value)
+        except Exception as e:
+            return False, e

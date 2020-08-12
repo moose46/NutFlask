@@ -38,12 +38,12 @@ Author: Robert W. Curtiss
 
 #https://www.udemy.com/course/rest-api-flask-and-python/learn/lecture/5960152#overview
 class Ingredient_rest(MethodView):
-    def __init__(self, name='n/a', usage='N/A', _id=None):
+    def __init__(self, name='n/a', usage='N/A', _id=None, side_effects = "None"):
 
-         self.name = name
-         self.usage = usage
-         self._id = uuid.uuid4().hex if _id is None else _id
-
+        self.name = name
+        self.usage = usage
+        self._id = uuid.uuid4().hex if _id is None else _id
+        self.side_effects = side_effects
 
     def save_to_mongo(self):
         Database.insert("Ingredient", self.json())
@@ -58,16 +58,24 @@ class Ingredient_rest(MethodView):
         return Database.find_one("Ingredient", {'_id': id})
     @classmethod
     def get_by_name(cls, ingredient_name):
-        return Database.find_one("Ingredient", {'name': ingredient_name})
+        data = Database.find_one("Ingredient", {'name': ingredient_name})
+        if data is not None:
+            return cls(**data)
+
 
     def delete_by_name(self, ingredient_name):
         return Database.delete_one("Ingredient", {'name': ingredient_name})
+
+    @classmethod
+    def update(cls, mongo_id, new_value):
+        return Database.update("Ingredient", mongo_id=mongo_id, new_values=new_value)
 
     def json(self):
         return {
             '_id': self._id,
             'name': self.name,
-            'usage': self.usage
+            'usage': self.usage,
+            'side_effects' : self.side_effects
         }
     # def post(self, name, usage):
     #     self.name = name
@@ -94,15 +102,13 @@ class Ingredient_rest(MethodView):
         try:
             x = Ingredient_rest.get_by_name(name)
             if x is not None:
-                return make_response(jsonify(x), 200)
-            l1 = Database.get_list('Ingredient')
-            l3 = []
-            for l2 in l1:
-                l3.append(
-                    l2
-                )
-            return make_response(jsonify(l3, 200))
-            #return make_response(jsonify(self.error["itemNotFound"]), 400)
+                return make_response(x.json(), 200)
+            elif name is None:
+                # just return a list of ingredients if there was no argument
+                l1 = list(Database.get_list('Ingredient'))
+                return make_response(jsonify(l1, 200))
+            else:
+                return make_response(jsonify(self.error["itemNotFound"]), 400)
 
         except Exception as e:
             return {"error" : e}
@@ -113,14 +119,28 @@ class Ingredient_rest(MethodView):
         if x is not None:
             return make_response(jsonify(self.error["itemAlreadyExists"]), 400)
         self.name = name
-        self.save_to_mongo()
-        return self.json()
+        results = self.save_to_mongo()
+        return make_response(self.json(),201)
+
+    def put(self,name):
+        print("PUT")
+        body = request.get_json()
+        new_name = request.json['name']
+        old_data = Ingredient_rest.get_by_name(name)
+        if old_data is None:
+            return make_response(jsonify(self.error["itemNotFound"]), 400)
+        old_obj = self.get_by_name(name)
+        results = Ingredient_rest.update(mongo_id=old_obj._id, new_value=body)
+        if results[0] == True:
+            return make_response(jsonify(body),200)
+        else:
+            return make_response(jsonify(results[1].details),405)
 
     def delete(self, name):
         """ Delete an item """
         x = Ingredient_rest.get_by_name(name)
         if x is None:
-            return make_response(jsonify(self.error["itemNotFound"]), 400)
+            return make_response(jsonify(self.error["itemNotFound"]), 405)
         self.delete_by_name(name)
         return make_response(jsonify({}), 200)
 

@@ -20,9 +20,11 @@ api = Api(app)
 def int_db():
     Database.initialize()
 myView = Ingredient_rest.as_view("ingredient_api")
-app.add_url_rule("/ingredient", methods=['POST'], view_func=myView)
-app.add_url_rule('/ingredient', methods=['GET'], defaults={'name' : None}, view_func=myView)
-app.add_url_rule("/ingredient/<string:name>",methods=['GET','PUT','DELETE'], view_func=myView)
+app.add_url_rule("/ingredient/create/<string:name>", methods=['POST'], view_func=myView)
+app.add_url_rule('/ingredient/list', methods=['GET'], defaults={'name' : None}, view_func=myView)
+app.add_url_rule("/ingredient/view/<string:name>",methods=['GET'], view_func=myView)
+app.add_url_rule("/ingredient/update/<string:name>",methods=['PUT'], view_func=myView)
+app.add_url_rule("/ingredient/delete/<string:name>",methods=['DELETE'], view_func=myView)
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
