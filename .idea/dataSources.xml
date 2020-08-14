@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="NutFlaskTestData" uuid="3f2e2cd7-1cdb-4cb6-9ecf-3ab167c774ac">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\me\Source\Repos\NutFlask\models\NutFlaskTestData.db</jdbc-url>
+    </data-source>
+  </component>
+</project>

@@ -42,7 +42,8 @@ class Database (object):
     @staticmethod
     def find_one(collection, query):
         try:
-            return Database.DATABASE[collection].find_one(query)
+            x = Database.DATABASE[collection].find_one(query)
+            return x
         except Exception as e:
             return e
     @staticmethod

@@ -3,7 +3,7 @@ __project__ = 'Breathing Air Solutions'
 
 from flask import Flask, request, make_response,jsonify,redirect,url_for
 from flask.views  import MethodView
-
+from flask_restful import reqparse,Api
 
 
 """
@@ -23,6 +23,7 @@ __author__ = 'Robert W. Curtiss'
 import uuid
 
 from common.database import Database
+from flask_jwt import jwt_required
 
 """
 ====================================================
@@ -38,6 +39,11 @@ Author: Robert W. Curtiss
 
 #https://www.udemy.com/course/rest-api-flask-and-python/learn/lecture/5960152#overview
 class Ingredient_rest(MethodView):
+    parser = reqparse.RequestParser()
+    parser.add_argument('name',
+                        required=True,
+                        help={'message', 'This Field cannot be left blank!'})
+
     def __init__(self, name='n/a', usage='N/A', _id=None, side_effects = "None"):
 
         self.name = name
@@ -96,7 +102,7 @@ class Ingredient_rest(MethodView):
             "errorMessage": "Could not create item. Item already exists"
         }
     }
-
+    #@jwt_required()
     def get(self, name):
 
         try:
@@ -113,19 +119,17 @@ class Ingredient_rest(MethodView):
         except Exception as e:
             return {"error" : e}
     def post(self,name):
-        print('POST')
-        body = request.get_json()
+        body = Ingredient_rest.parser.parse_args()
         x = Ingredient_rest.get_by_name(name)
-        if x is not None:
+        if x:
             return make_response(jsonify(self.error["itemAlreadyExists"]), 400)
         self.name = name
         results = self.save_to_mongo()
         return make_response(self.json(),201)
 
     def put(self,name):
-        print("PUT")
-        body = request.get_json()
-        new_name = request.json['name']
+        body = Ingredient_rest.parser.parse_args()
+        new_name = body['name']
         old_data = Ingredient_rest.get_by_name(name)
         if old_data is None:
             return make_response(jsonify(self.error["itemNotFound"]), 400)
@@ -134,17 +138,13 @@ class Ingredient_rest(MethodView):
         if results[0] == True:
             return make_response(jsonify(body),200)
         else:
-            return make_response(jsonify(results[1].details),405)
+            return make_response(jsonify(results[1].details),400)
 
     def delete(self, name):
         """ Delete an item """
         x = Ingredient_rest.get_by_name(name)
         if x is None:
-            return make_response(jsonify(self.error["itemNotFound"]), 405)
+            return make_response(jsonify(self.error["itemNotFound"]), 400)
         self.delete_by_name(name)
         return make_response(jsonify({}), 200)
 
-# class IngredientApi(MethodView):
-#
-#     def get(self):
-#         return make_response(jsonify(Database.get_list("Ingredient",{}), 200))

@@ -42,12 +42,14 @@ class DatabaseTest(TestCase):
         self.assertTrue(x['name'] == 'salt_test1')
         x1 = Database.update('Ingredient',x['_id'],{'name':'salt_test1'})
         self.assertTrue(x1 is not None)
+
+    def test018_delete_ingredient(self):
+        r = Ingredient.delete_by_name('salt_test1')
+        self.assertTrue(r.name.deleted_count == 1)
+
     def test020_get_all(self):
         for x in Ingredient.find():
             print(x)
     #delete salt and make sure that only on item was deleted
-    def test030_delete_ingredient(self):
-        r = Ingredient.delete_by_name('salt_test1')
-        self.assertTrue(r.name.deleted_count == 1)
 
 

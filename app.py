@@ -3,9 +3,15 @@ from flask_restful import Api
 
 from common.database import Database
 from models.ingredient_rest import Ingredient_rest
+from flask_jwt import JWT,jwt_required
+from security import authenticate, identity
+
 
 app = Flask(__name__)
 api = Api(app)
+api.secret_key: str = 'kittyP00p'
+
+jwt = JWT(app, authenticate, identity) #/auth
 
 
 # @app.route('/')
