@@ -8,12 +8,13 @@ from security import authenticate, identity
 
 
 app = Flask(__name__)
+app.debug = True
+app.secret_key = "jose"
 api = Api(app)
-api.secret_key: str = 'kittyP00p'
 
 jwt = JWT(app, authenticate, identity) #/auth
-
-
+#api.security_key = 'kitty'
+#app.config["SECRET_KET"] = 'jose'
 # @app.route('/')
 # def index():
 #  ingredients = Ingredient.find()
@@ -31,7 +32,7 @@ app.add_url_rule('/ingredient/list', methods=['GET'], defaults={'name' : None}, 
 app.add_url_rule("/ingredient/view/<string:name>",methods=['GET'], view_func=myView)
 app.add_url_rule("/ingredient/update/<string:name>",methods=['PUT'], view_func=myView)
 app.add_url_rule("/ingredient/delete/<string:name>",methods=['DELETE'], view_func=myView)
-
+#app.add_url_rule("/auth",methods=None,view_func=myView)
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
 
