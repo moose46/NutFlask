@@ -13,8 +13,9 @@ Author: Robert W. Curtiss
 ===================================================
 """
 import sqlite3
+from common.globals import SQLITE_DB
 
-connection = sqlite3.connect('NutFlaskTestData.db')
+connection = sqlite3.connect(SQLITE_DB)
 
 cursor = connection.cursor()
 

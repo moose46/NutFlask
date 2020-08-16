@@ -102,7 +102,7 @@ class Ingredient_rest(MethodView):
             "errorMessage": "Could not create item. Item already exists"
         }
     }
-    #@jwt_required()
+    @jwt_required()
     def get(self, name):
 
         try:
