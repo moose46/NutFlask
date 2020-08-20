@@ -1,12 +1,12 @@
 __author__ = 'Robert W. Curtiss'
-__project__ = 'Breathing Air Solutions'
+__project__ = 'NutFlask'
 
 from models.ingredient import Ingredient
 
 """
 ====================================================
 Author: Robert W. Curtiss
-    Project: Breathing Air Solutions
+    Project: NutFlask
     File: test_db_connection
     Created: Jul, 27, 2020
     
@@ -32,7 +32,7 @@ class DatabaseTest(TestCase):
     def test015_get_salt(self):
         x = Ingredient.get_by_name('salt_test')
         print(x)
-        self.assertTrue(x['name'] == 'salt_test')
+        self.assertTrue(x.name == 'salt_test')
 
     # add salt to the database
     def test016_update_salt(self):
@@ -44,11 +44,11 @@ class DatabaseTest(TestCase):
         self.assertTrue(x1 is not None)
 
     def test018_delete_ingredient(self):
-        r = Ingredient.delete_by_name('salt_test1')
-        self.assertTrue(r.name.deleted_count == 1)
+        r = Ingredient.delete_by_name(ingredient_name='salt_test1')
+        self.assertTrue(r.deleted_count == 1)
 
     def test020_get_all(self):
-        for x in Ingredient.find():
+        for x in Ingredient.get_list():
             print(x)
     #delete salt and make sure that only on item was deleted
 
