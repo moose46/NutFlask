@@ -22,7 +22,7 @@ Author: Robert W. Curtiss
 from common.globals import SQLITE_DB
 class User(MethodView):
     def __init__(self,username,password, _id=None):
-        self._id = uuid.uuid4().hex if _id is None else _id
+        self.id = uuid.uuid4().hex if _id is None else _id
         self.username = username
         self.password = password
 
@@ -47,9 +47,12 @@ class User(MethodView):
     def get_list(cls):
         return Database.get_list("Users")
 
+    @classmethod
+    def update(cls, mongo_id, new_value):
+        return Database.update("Users", mongo_id=mongo_id, new_values=new_value)
     def json(self):
         return {
-            '_id': self._id,
+            '_id': self.id,
             'username': self.username,
             'password': self.password
         }
@@ -82,6 +85,15 @@ class UserRegister(MethodView):
         user = User(data['username'],data['password'])
         user.delete_by_username(data['username'])
         return make_response( jsonify({"message" :"User Deleted Successfully "},201))
+
+    def put(self):
+        data = UserRegister.parser.parse_args()
+        user = User.get_by_username(data['username'])
+        if user == None:
+            return make_response(jsonify({'message' : 'A user with that name does not exist exist!'}),400)
+        if len(data['password']) > 4:
+            user.update(user.id, {'password': data['password']})
+        return make_response(jsonify({'message' : 'Password updated!'}),200)
 
 
 
