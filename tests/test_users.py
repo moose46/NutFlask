@@ -27,4 +27,7 @@ class DatabaseTest(TestCase):
     def test011_insert_user(self):
         user = User('stinky', '123')
         user.save_to_mongo()
-        self.assertTrue(User.get_by_name("stinky") is not None)
+
+    def test015_delete_user(self):
+        User.delete_by_username('stinky')
+        self.assertTrue(User.get_by_username("stinky") == None)

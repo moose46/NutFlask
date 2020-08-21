@@ -28,7 +28,7 @@ class User(MethodView):
 
     @classmethod
     def get_by_username(cls, username):
-        data = Database.find_one("Users", {'name': username})
+        data = Database.find_one("Users", {'username': username})
         if data:
             return cls(**data)
 
@@ -37,9 +37,15 @@ class User(MethodView):
 
     @classmethod
     def find_by_id(cls,id):
-        data = Datatbase.find_one("Users", {'_id' : id})
+        data = Database.find_one("Users", {'_id' : id})
         if data:
             return cls(**data)
+    @classmethod
+    def delete_by_username(cls, username):
+        return Database.delete_one("Users", {'username': username})
+    @classmethod
+    def get_list(cls):
+        return Database.get_list("Users")
 
     def json(self):
         return {
@@ -61,17 +67,21 @@ class UserRegister(MethodView):
 
     def post(self):
         data = UserRegister.parser.parse_args()
-        if User.find_by_username(data['username']):
+        user = User.get_by_username(data['username'])
+        if user:
             return make_response(jsonify({'message' : 'A user with that name already exists!'}),400)
-        save_to_mongo()
-        # connection = sqlite3.connect(SQLITE_DB)
-        # cursor = connection.cursor()
-        #
-        # query = "INSERT INTO users VALUES (NULL, ?,?)"
-        # cursor.execute(query,(data['username'],data['password']))
-        # connection.commit()
-        # connection.close()
+        user = User(data['username'],data['password'])
+        user.save_to_mongo()
         return make_response( jsonify({"message" :"User Created Successfully "},201))
+
+    def delete(self):
+        data = UserRegister.parser.parse_args()
+        user = User.get_by_username(data['username'])
+        if user == None:
+            return make_response(jsonify({'message' : 'A user with that name does not exist exist!'}),400)
+        user = User(data['username'],data['password'])
+        user.delete_by_username(data['username'])
+        return make_response( jsonify({"message" :"User Deleted Successfully "},201))
 
 
 
