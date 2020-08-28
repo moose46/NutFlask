@@ -15,4 +15,14 @@ Author: Robert W. Curtiss
 """
 
 SQLITE_DB = r'C:\Users\me\Source\Repos\NutFlask\models\NutFlaskTestData.db'
+error = {
+    "itemNotFound": {
+        "errorCode": "itemNotFound",
+        "errorMessage": "Item not found"
+    },
+    "itemAlreadyExists": {
+        "errorCode": "itemAlreadyExists",
+        "errorMessage": "Could not create item. Item already exists"
+    }
+}
 

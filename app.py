@@ -32,6 +32,8 @@ app.add_url_rule("/ingredient/update/<string:name>",methods=['PUT'], view_func=m
 app.add_url_rule("/ingredient/delete/<string:name>",methods=['DELETE'], view_func=myView)
 app.add_url_rule("/user/register/",methods=['POST','DELETE','PUT'], view_func=userView)
 app.add_url_rule("/product/create",methods=['POST'], view_func=productView)
+app.add_url_rule("/product/list",methods=['GET'], view_func=productView)
+app.add_url_rule("/product/view/<string:name>",methods=['GET'], view_func=productView)
 #app.add_url_rule("/auth",methods=None,view_func=myView)
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
