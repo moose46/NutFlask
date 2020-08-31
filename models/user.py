@@ -3,6 +3,7 @@ import uuid
 __author__ = 'Robert W. Curtiss'
 __project__ = 'NutFlask'
 import common.globals
+import datetime
 
 from flask import make_response, jsonify
 from flask.views import MethodView
@@ -25,6 +26,9 @@ class User(MethodView):
         self.id = uuid.uuid4().hex if _id is None else _id
         self.username = username
         self.password = password
+        self.today = datetime.datetime.today().isoformat()
+        self.date_created = self.today
+        self.date_updated = self.today
 
     @classmethod
     def get_by_username(cls, username):
@@ -54,7 +58,9 @@ class User(MethodView):
         return {
             '_id': self.id,
             'username': self.username,
-            'password': self.password
+            'password': self.password,
+            'date_created' : self.date_created,
+            'date_updated' : self.date_updated
         }
 
 class UserRegister(MethodView):
