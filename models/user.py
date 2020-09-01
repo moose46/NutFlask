@@ -9,6 +9,8 @@ from flask import make_response, jsonify
 from flask.views import MethodView
 from flask_restful import reqparse
 from common.database import Database
+from models.nutflaskbase import NutFlaskBase
+
 """
 ====================================================
 Author: Robert W. Curtiss
@@ -21,15 +23,12 @@ Author: Robert W. Curtiss
 ===================================================
 """
 from common.globals import SQLITE_DB
-class User(MethodView):
-    def __init__(self,username,password, _id=None):
+class User(MethodView, NutFlaskBase):
+    def __init__(self,username,password, _id=None, date_created=None,date_updated=None):
         self.id = uuid.uuid4().hex if _id is None else _id
         self.username = username
         self.password = password
-        self.today = datetime.datetime.today().isoformat()
-        self.date_created = self.today
-        self.date_updated = self.today
-
+        super().__init__()
     @classmethod
     def get_by_username(cls, username):
         data = Database.find_one("Users", {'username': username})

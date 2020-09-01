@@ -132,3 +132,25 @@ class Product(MethodView, NutFlaskBase):
         #fixme return check for error
         product.save_to_mongo()
         return make_response(jsonify({"message": "Product Created Successfully "}, 201))
+    def put(self):
+        payload = request.json
+        data = ProductParams.parser.parse_args()
+        try:
+            product = Product.get_by_product_name(data['product_name'])
+        except Exception as e:
+            return make_response(jsonify({"message": e.args[0]}, 400))
+        for i in payload['ingredients']:
+            new_i = Ingredient.get_by_name(i)
+            if new_i:
+                # add to the list of ingredients
+                self.ingredients.append(Ingredient(name=new_i.name).json())
+            else:
+                new_i = Ingredient(name=i)
+                #fix check results of the insert
+                new_i.save_to_mongo()
+                self.ingredients.append(Ingredient(new_i.name).json())
+        product = Product(product_name=data['product_name'])
+        product.ingredients = self.ingredients
+        #fixme return check for error
+        product.update(product._id,product.json_update())
+        return make_response(jsonify({"message": "Product Updated Successfully "}, 201))
